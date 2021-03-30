@@ -1,5 +1,7 @@
 // Authors: Shize Li and Robert Zhang
 
+import {RollerCoaster} from "./RollerCoaster.js";
+
 const renderer = new THREE.WebGLRenderer();
 const canvas = renderer.domElement;
 
@@ -8,7 +10,9 @@ document.getElementById("canvas_container").appendChild(canvas);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(80, 1, 0.1, 1000);
 
-camera.position.z = 1;
+camera.position.z = 4;
+camera.position.y = 3;
+camera.lookAt(0, 0, 0);
 
 // Update on window resize
 function resizeCanvas() {
@@ -29,13 +33,19 @@ scene.add(amb_light);
 scene.add(dir_light);
 
 // Models
-let teapotGeometry = new THREE.TeapotGeometry(0.1, 15, true, true, true, false, false);
-let teapot = new THREE.Mesh(teapotGeometry, new THREE.MeshStandardMaterial({ color: 'pink' }));
-scene.add(teapot);
+let rc = new RollerCoaster();
+scene.add(rc);
 
-// Draw
+// Rendering and Animation
+let t = 0;
 function animate() {
     renderer.render(scene, camera);
+
+    rc.update(t);
+
+    t += 0.002;
+    if (t >= 1) t = 0;
+
     requestAnimationFrame(animate);
 }
 animate();
