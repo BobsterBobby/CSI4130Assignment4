@@ -1,4 +1,5 @@
-//Island
+// Authors: Shize Li and Robert Zhang
+// Island
 
 export class Island extends THREE.Group {
 	constructor(islandRadius = 4, islandHeight = 0.1, x = 0, y = 0, z = 0,

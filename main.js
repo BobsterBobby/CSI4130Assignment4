@@ -13,8 +13,8 @@ const camera = new THREE.PerspectiveCamera(80, 1, 0.1, 1000);
 
 //Cam Direction
 var camPosX, camPosY, camPosZ, camLAX, camLAY, camLAZ;
-camPosX = 0; camPosY = 1; camPosZ = 2;
-camLAX = 0; camLAY = 1; camLAZ = 0;
+camPosX = 0; camPosY = 8; camPosZ = 0;
+camLAX = 0; camLAY = 1; camLAZ = -7;
 
 camera.position.x = camPosX;
 camera.position.y = camPosY;
@@ -43,16 +43,19 @@ var axes = new THREE.AxesHelper(10);
 scene.add(axes);
 
 // Models
-let rc = new RollerCoaster();
-rc.position.set(0,3,-8)
-scene.add(rc);
+let roller_coaster = new RollerCoaster(4);
+roller_coaster.position.set(0, 3, -8);
+scene.add(roller_coaster);
+
 let island = new Island(16, 0.4, 0, 0.2, 0, 20, 4, 8);
-island.position.set(0,0,0)
+island.position.set(0, 0, 0);
 scene.add(island);
+
 var teapotGeometry = new THREE.TeapotGeometry(0.05, 15, true, true, true, false, false);
 var teapot = new THREE.Mesh(teapotGeometry, new THREE.MeshBasicMaterial({ color: 'pink' }));
 teapot.position.set(camLAX, camLAY, camLAZ);
 scene.add(teapot);
+
 var planeGeometry = new THREE.PlaneGeometry(100,100);
 var planeMaterial = new THREE.MeshBasicMaterial({color: 'blue', side: THREE.DoubleSide});
 var plane = new THREE.Mesh(planeGeometry, planeMaterial);
@@ -62,30 +65,9 @@ scene.add(plane);
 
 
 // Event Handler
-document.onkeydown = function(kdEvent){keydown(kdEvent)};
+document.onkeydown = (kdEvent) => {
 
-// Rendering and Animation
-let t = 0;
-function animate() {
-    renderer.render(scene, camera);
-
-    //rc.rotation.set(0, t, 0);
-    rc.update(t);
-	island.update();
-	
-	camera.position.x = camPosX;
-	camera.position.y = camPosY;
-	camera.position.z = camPosZ;
-	camera.lookAt(camLAX, camLAY, camLAZ);
-	teapot.position.set(camLAX, camLAY, camLAZ);
-
-    t += 0.002;
-
-    requestAnimationFrame(animate);
-}
-
-function keydown(kdEvent){
-	switch(kdEvent.keyCode){
+    switch (kdEvent.keyCode) {
 		case 87: //W
 			camLAZ++;
 			break;
@@ -104,26 +86,42 @@ function keydown(kdEvent){
 		case 81: //Q
 			camLAY--;
 			break;
-		case 104: //8
+		case 73: //I
 			camPosZ++;
 			break;
-		case 98: //2
+		case 75: //K
 			camPosZ--;
 			break;
-		case 100: //4
+		case 74: //J
 			camPosX++;
 			break;
-		case 102: //6
+		case 76: //L
 			camPosX--;
 			break;
-		case 105: //9
+		case 79: //O
 			camPosY++;
 			break;
-		case 99: //3
+		case 85: //U
 			camPosY--;
 			break;
 	}
+
+	teapot.position.set(camLAX, camLAY, camLAZ);
+	camera.position.set(camPosX, camPosY, camPosZ);
+	camera.lookAt(teapot.position);
 }
 
+// Rendering and Animation
+let t = 0;
+function animate() {
+	
+    renderer.render(scene, camera);
 
+    roller_coaster.update(t);
+	island.update();
+
+    t += 0.001;
+
+    requestAnimationFrame(animate);
+}
 animate();

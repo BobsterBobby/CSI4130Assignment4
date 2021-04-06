@@ -1,43 +1,47 @@
+// Authors: Shize Li and Robert Zhang
+
+import {OBJLoader} from "./node_modules/three/examples/jsm/loaders/OBJLoader.js";
 
 class RollerCoaster extends THREE.Group {
 
-    constructor() {
+    constructor(radius) {
         super();
 
-        this.rail = new Rail(4);
+        this.rail = new Rail(radius);
 
         let rail_geo = new THREE.TubeGeometry(this.rail, 1000, 0.02, 6, false);
-        this.add(new THREE.Mesh(rail_geo, new THREE.MeshStandardMaterial({color: 0x1e1e1e})));
+        this.add(new THREE.Mesh(rail_geo, new THREE.MeshStandardMaterial({color: 0x999999})));
         
-        let train_geo = new THREE.CylinderGeometry(0.1, 0.1, 0.5, 4, 1, false);
-        train_geo.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI/4));
-        train_geo.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI/2));
+        this.trains = new Array();
+        
+        let loader = new OBJLoader();
+        loader.load("objects/RollerCoasterTrain.obj", (obj) => {
 
-        let train_mat = new THREE.MeshStandardMaterial({color: 0x998022});
+            obj = obj.children[0];
+            obj.material.color = new THREE.Color(0x998022);
 
-        this.train_front = new THREE.Mesh(train_geo, train_mat);
-        this.train_back = new THREE.Mesh(train_geo, train_mat);
-        this.add(this.train_front);
-        this.add(this.train_back);
-
-        this.tangent = new THREE.ArrowHelper();
-        this.add(this.tangent);
+            for (let i = 0; i < 5; i++) {
+                let train = obj.clone();
+                this.trains.push(train);
+                this.add(train);
+            }
+        });
+        
+        this.trains.forEach(() => this.add(t));
     }
 
     update(t) {
+
         t = t % 1;
 
-        this.train_front.position.copy(this.rail.getPoint(t));
-        this.train_front.lookAt(this.rail.getTangent(t).add(this.train_front.position));
+        for (let i = 0; i < this.trains.length; i++) {
 
-        let tm = t - 0.02;
-        if (tm < 0) tm += 1;
+            this.trains[i].position.copy(this.rail.getPointAt(t));
+            this.trains[i].lookAt(this.rail.getTangentAt(t).add(this.trains[i].position).add(this.position));
 
-        this.train_back.position.copy(this.rail.getPoint(tm));
-        this.train_back.lookAt(this.rail.getTangent(tm).add(this.train_front.position));
-
-        this.tangent.position.copy(this.rail.getPoint(t));
-        this.tangent.setDirection(this.rail.getTangent(t));
+            t = t - 0.011;
+            if (t < 0) t += 1;
+        }
     }
 }
 
@@ -45,14 +49,13 @@ class Rail extends THREE.Curve {
 
     constructor(radius) {
         super();
-
         this.radius = radius;
     }
 
     getPoint(t, optionalTarget = new THREE.Vector3()) {
         t *= 2*Math.PI;
         let x = Math.cos(t)*this.radius;
-        let y = (Math.sin(4*t) + Math.sin(6*t) + Math.sin(9*t))/3;
+        let y = (Math.sin(4*t) + Math.sin(6*t) + Math.sin(9*t))/3.5;
         let z = Math.sin(t)*this.radius;
         return optionalTarget.set(x, y, z);
     }
