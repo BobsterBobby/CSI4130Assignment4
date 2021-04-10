@@ -26,8 +26,6 @@ class RollerCoaster extends THREE.Group {
                 this.add(train);
             }
         });
-        
-        this.trains.forEach(() => this.add(t));
     }
 
     update(t) {
