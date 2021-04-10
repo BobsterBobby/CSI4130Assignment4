@@ -17,9 +17,10 @@ class RollerCoaster extends THREE.Group {
         let loader = new OBJLoader();
         loader.load("objects/RollerCoasterTrain.obj", (obj) => {
 
-            obj = obj.children[0];
-            obj.material.color = new THREE.Color(0x998022);
-
+            obj.children[0].material = new THREE.MeshStandardMaterial({color: 0x0066aa, roughness: 0});
+            obj.children[1].material = new THREE.MeshStandardMaterial({color: 0x888800});
+            obj.children[2].material = new THREE.MeshStandardMaterial({color: 0x888800});
+            
             for (let i = 0; i < 5; i++) {
                 let train = obj.clone();
                 this.trains.push(train);
