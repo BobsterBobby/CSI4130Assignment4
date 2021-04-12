@@ -22,12 +22,14 @@ export class Island extends THREE.Group {
 		let island_Base_Geo = new THREE.CylinderGeometry(this.radius, this.radius*this.islandBaseRatio, this.islandHeight,1000, 1, false);
 		this.islandBase = new THREE.Mesh(island_Base_Geo, new THREE.MeshStandardMaterial({color: 0xf5b942}));
 		this.islandBase.position.set(this.islandPositionX,this.islandPositionY,this.islandPositionZ);
+		this.islandBase.receiveShadow = true;
 		this.add(this.islandBase);
 		
 		//Rollercoaster Platform
 		let island_Base_Geo2 = new THREE.CylinderGeometry(this.radius/4, this.radius/4*3/2, this.islandHeight,1000, 1, false);
 		this.islandBase2 = new THREE.Mesh(island_Base_Geo2, new THREE.MeshStandardMaterial({color: 0xee4444}));
 		this.islandBase2.position.set(this.islandPositionX,this.islandPositionY+this.islandHeight,this.islandPositionZ-this.radius/2);
+		this.islandBase2.receiveShadow = true;
 		this.add(this.islandBase2);
 		
 		//Park platform
@@ -38,6 +40,7 @@ export class Island extends THREE.Group {
 		let island_Base_Geo3 = new THREE.CylinderGeometry(this.radius, this.radius, this.islandHeight/10,1000, 1, false);
 		this.islandBase3 = new THREE.Mesh(island_Base_Geo3, new THREE.MeshStandardMaterial({color: 'grey'}));
 		this.islandBase3.position.set(parkFloorPosX,parkFloorPosY,parkFloorPosZ);
+		this.islandBase3.receiveShadow = true;
 		this.add(this.islandBase3);
 		
 		//Base variables
@@ -61,6 +64,8 @@ export class Island extends THREE.Group {
 			this.islandWall.push(new THREE.Mesh(wall_Geo, new THREE.MeshStandardMaterial({color: 'brown'})));
 			this.islandWall[i].position.set(positionX,positionY,positionZ);
 			this.islandWall[i].rotateY(this.startingAngle+tangAngle);
+			this.islandWall[i].castShadow = true;
+			this.islandWall[i].receiveShadow = true;
 			this.add(this.islandWall[i]);
 		}
 		
@@ -84,6 +89,10 @@ export class Island extends THREE.Group {
 			this.wallSpikes.push(new THREE.Mesh(spike_Geo, new THREE.MeshStandardMaterial({color: 'grey'})));
 			this.wallPolls[i].position.set(pollPositionX, pollPositionY, pollPositionZ);
 			this.wallSpikes[i].position.set(pollPositionX, spikePositionY, pollPositionZ);
+			this.wallPolls[i].castShadow = true;
+			this.wallPolls[i].receiveShadow = true;
+			this.wallSpikes[i].castShadow = true;
+			this.wallSpikes[i].receiveShadow = true;
 			this.add(this.wallPolls[i]);
 			this.add(this.wallSpikes[i]);
 		}
@@ -118,6 +127,12 @@ export class Island extends THREE.Group {
 			supportPositionX = (plankwidth/2)*Math.sin(this.startingAngle-angle-Math.PI/2).toFixed(3)+plankPositionX;
 			supportPositionZ = (plankwidth/2)*Math.cos(this.startingAngle-angle-Math.PI/2).toFixed(3)+plankPositionZ;
 			this.supports[2*i+1].position.set(supportPositionX, supportPositionY, supportPositionZ);
+			this.planks[i].castShadow = true;
+			this.planks[i].receiveShadow = true;
+			this.supports[2*i].castShadow = true;
+			this.supports[2*i].receiveShadow = true;
+			this.supports[2*i+1].castShadow = true;
+			this.supports[2*i+1].receiveShadow = true;
 			this.add(this.planks[i]);
 			this.add(this.supports[2*i]);
 			this.add(this.supports[2*i+1]);
