@@ -7,11 +7,29 @@ class RollerCoaster extends THREE.Group {
     constructor(radius) {
         super();
 
-        this.rail = new Rail(radius);
+        this.rail_curve = new Rail(radius);
 
-        let rail_geo = new THREE.TubeGeometry(this.rail, 1000, 0.02, 6, false);
-        this.add(new THREE.Mesh(rail_geo, new THREE.MeshStandardMaterial({color: 0x999999})));
+        let rail_geo = new THREE.TubeGeometry(this.rail_curve, 1000, 0.02, 6, false);
+        let rail = new THREE.Mesh(rail_geo, new THREE.MeshStandardMaterial({color: 0x999999}));
+        this.add(rail);
         
+        let cylinder_geo = new THREE.CylinderGeometry(0.02, 0.02, 1, 6, 1);
+        cylinder_geo.applyMatrix4(new THREE.Matrix4().makeTranslation(0, -0.5, 0));
+        let cylinder = new THREE.Mesh(cylinder_geo, new THREE.MeshStandardMaterial({color: 0x999999}));
+        cylinder.scale.set(1, 5, 1);
+
+        let support_locations = this.rail_curve.getPoints(20);
+
+        for (let i = 0; i < support_locations.length; i++) {
+            let x = support_locations[i].x;
+            let y = support_locations[i].y;
+            let z = support_locations[i].z;
+
+            let support = cylinder.clone();
+            support.position.set(x, y, z);
+            this.add(support);
+        }
+
         this.trains = new Array();
         
         let loader = new OBJLoader();
@@ -27,6 +45,8 @@ class RollerCoaster extends THREE.Group {
                 this.add(train);
             }
         });
+
+        this.update(0);
     }
 
     update(t) {
@@ -35,8 +55,8 @@ class RollerCoaster extends THREE.Group {
 
         for (let i = 0; i < this.trains.length; i++) {
 
-            this.trains[i].position.copy(this.rail.getPointAt(t));
-            this.trains[i].lookAt(this.rail.getTangentAt(t).add(this.trains[i].position).add(this.position));
+            this.trains[i].position.copy(this.rail_curve.getPointAt(t));
+            this.trains[i].lookAt(this.rail_curve.getTangentAt(t).add(this.trains[i].position).add(this.position));
 
             t = t - 0.011;
             if (t < 0) t += 1;
