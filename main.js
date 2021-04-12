@@ -4,8 +4,11 @@ import {RollerCoaster} from "./RollerCoaster.js";
 import {Island} from "./Island.js";
 
 const renderer = new THREE.WebGLRenderer();
-const canvas = renderer.domElement;
 
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const canvas = renderer.domElement;
 document.getElementById("canvas_container").appendChild(canvas);
 
 const scene = new THREE.Scene();
@@ -35,10 +38,26 @@ window.addEventListener("resize", resizeCanvas, true);
 // Lights
 const amb_light = new THREE.AmbientLight(0xffff99, 0.3);
 const dir_light = new THREE.DirectionalLight(0xffffff, 1.5);
+
 dir_light.position.set(-2, 4, 2);
+dir_light.castShadow = true;
+
+dir_light.shadow.camera.left = -30;
+dir_light.shadow.camera.right = 30;
+dir_light.shadow.camera.bottom = -30;
+dir_light.shadow.camera.top = 30;
+dir_light.shadow.camera.near = 0.1;
+dir_light.shadow.camera.far = 100;
+dir_light.shadow.camera.updateProjectionMatrix();
+
+dir_light.shadow.bias = 0.0001;
+dir_light.shadow.mapSize.width = 5000;
+dir_light.shadow.mapSize.height = 5000;
+
 scene.add(amb_light);
 scene.add(dir_light);
 
+// Axes
 var axes = new THREE.AxesHelper(10);
 scene.add(axes);
 

@@ -11,12 +11,16 @@ class RollerCoaster extends THREE.Group {
 
         let rail_geo = new THREE.TubeGeometry(this.rail_curve, 1000, 0.02, 6, false);
         let rail = new THREE.Mesh(rail_geo, new THREE.MeshStandardMaterial({color: 0x999999}));
+        rail.castShadow = true;
+        rail.receiveShadow = true;
         this.add(rail);
         
         let cylinder_geo = new THREE.CylinderGeometry(0.02, 0.02, 1, 6, 1);
         cylinder_geo.applyMatrix4(new THREE.Matrix4().makeTranslation(0, -0.5, 0));
         let cylinder = new THREE.Mesh(cylinder_geo, new THREE.MeshStandardMaterial({color: 0x999999}));
         cylinder.scale.set(1, 5, 1);
+        cylinder.castShadow = true;
+        cylinder.receiveShadow = true;
 
         let support_locations = this.rail_curve.getPoints(20);
 
@@ -36,8 +40,14 @@ class RollerCoaster extends THREE.Group {
         loader.load("objects/RollerCoasterTrain.obj", (obj) => {
 
             obj.children[0].material = new THREE.MeshStandardMaterial({color: 0x0066aa, roughness: 0});
+            obj.children[0].castShadow = true;
+            obj.children[0].receiveShadow = true;
             obj.children[1].material = new THREE.MeshStandardMaterial({color: 0x888800});
+            obj.children[1].castShadow = true;
+            obj.children[1].receiveShadow = true;
             obj.children[2].material = new THREE.MeshStandardMaterial({color: 0x888800});
+            obj.children[2].castShadow = true;
+            obj.children[2].receiveShadow = true;
             
             for (let i = 0; i < 5; i++) {
                 let train = obj.clone();
