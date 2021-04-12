@@ -139,8 +139,8 @@ function animate() {
     roller_coaster.update(t);
 	island.update();
 
-    t += 0.001;
+    t += 0.002;
 
-    requestAnimationFrame(animate);
+    setTimeout(() => requestAnimationFrame(animate), 1000/60);
 }
 animate();
