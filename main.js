@@ -2,8 +2,9 @@
 
 import {RollerCoaster} from "./RollerCoaster.js";
 import {Island} from "./Island.js";
+import {Water} from "./Water.js";
 
-const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({antialias: true});
 
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -16,8 +17,8 @@ const camera = new THREE.PerspectiveCamera(80, 1, 0.1, 1000);
 
 //Cam Direction
 var camPosX, camPosY, camPosZ, camLAX, camLAY, camLAZ;
-camPosX = 0; camPosY = 8; camPosZ = 0;
-camLAX = 0; camLAY = 1; camLAZ = -7;
+camPosX = 0; camPosY = 12; camPosZ = 23;
+camLAX = 0; camLAY = 1; camLAZ = 14;
 
 camera.position.x = camPosX;
 camera.position.y = camPosY;
@@ -57,6 +58,9 @@ dir_light.shadow.mapSize.height = 5000;
 scene.add(amb_light);
 scene.add(dir_light);
 
+// Background
+scene.background = new THREE.Color(0xaaffff);
+
 // Axes
 var axes = new THREE.AxesHelper(10);
 scene.add(axes);
@@ -70,17 +74,14 @@ let island = new Island(16, 0.4, 0, 0.2, 0, 20, 4, 8);
 island.position.set(0, 0, 0);
 scene.add(island);
 
+let water = new Water();
+water.position.set(0, 0.08, 0);
+scene.add(water);
+
 var teapotGeometry = new THREE.TeapotGeometry(0.05, 15, true, true, true, false, false);
 var teapot = new THREE.Mesh(teapotGeometry, new THREE.MeshBasicMaterial({ color: 'pink' }));
 teapot.position.set(camLAX, camLAY, camLAZ);
 scene.add(teapot);
-
-var planeGeometry = new THREE.PlaneGeometry(100,100);
-var planeMaterial = new THREE.MeshBasicMaterial({color: 'blue', side: THREE.DoubleSide});
-var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-plane.position.set(0, -0.05, 0);
-plane.rotation.x = -Math.PI/2;
-scene.add(plane);
 
 
 // Event Handler
@@ -138,6 +139,7 @@ function animate() {
 
     roller_coaster.update(t);
 	island.update();
+	water.update();
 
     t += 0.002;
 
