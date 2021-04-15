@@ -1,8 +1,12 @@
 // Authors: Shize Li and Robert Zhang
 
+import {FirstPersonControls} from './node_modules/three/examples/jsm/controls/FirstPersonControls.js';
+
 import {RollerCoaster} from "./RollerCoaster.js";
 import {Island} from "./Island.js";
 import {Water} from "./Water.js";
+import {Cannon} from "./Cannon.js"
+import {Bomb} from "./Bomb.js"
 
 const renderer = new THREE.WebGLRenderer({antialias: true});
 
@@ -15,7 +19,16 @@ document.getElementById("canvas_container").appendChild(canvas);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(80, 1, 0.1, 1000);
 
-//Cam Direction
+const clock = new THREE.Clock();
+
+// First person controls
+let controls = new FirstPersonControls(camera, canvas);
+
+controls.movementSpeed = 10;
+controls.lookSpeed = 0.125;
+controls.lookVertical = true;
+
+// Cam Direction
 var camPosX, camPosY, camPosZ, camLAX, camLAY, camLAZ;
 camPosX = 0; camPosY = 12; camPosZ = 23;
 camLAX = 0; camLAY = 1; camLAZ = 14;
@@ -32,6 +45,7 @@ function resizeCanvas() {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.aspect = window.innerWidth/window.innerHeight;
     camera.updateProjectionMatrix();
+	controls.handleResize();
 }
 resizeCanvas();
 window.addEventListener("resize", resizeCanvas, true);
@@ -62,12 +76,12 @@ scene.add(dir_light);
 scene.background = new THREE.Color(0xaaffff);
 
 // Axes
-var axes = new THREE.AxesHelper(10);
-scene.add(axes);
+// var axes = new THREE.AxesHelper(10);
+// scene.add(axes);
 
 // Models
-let roller_coaster = new RollerCoaster(4);
-roller_coaster.position.set(0, 3, -8);
+let roller_coaster = new RollerCoaster(8);
+roller_coaster.position.set(0, 3, -4);
 scene.add(roller_coaster);
 
 let island = new Island(16, 0.4, 0, 0.2, 0, 20, 4, 8);
@@ -83,53 +97,18 @@ var teapot = new THREE.Mesh(teapotGeometry, new THREE.MeshBasicMaterial({ color:
 teapot.position.set(camLAX, camLAY, camLAZ);
 scene.add(teapot);
 
+let cannon1 = new Cannon(0.2);
+cannon1.position.set(10,0.65,5);
+scene.add(cannon1);
 
-// Event Handler
-document.onkeydown = (kdEvent) => {
+let cannon2 = new Cannon(0.2);
+cannon2.position.set(-10,0.65,5);
+scene.add(cannon2);
 
-    switch (kdEvent.keyCode) {
-		case 87: //W
-			camLAZ++;
-			break;
-		case 83: //S
-			camLAZ--;
-			break;
-		case 65: //A
-			camLAX++;
-			break;
-		case 68: //D
-			camLAX--;
-			break;
-		case 69: //E
-			camLAY++;
-			break;
-		case 81: //Q
-			camLAY--;
-			break;
-		case 73: //I
-			camPosZ++;
-			break;
-		case 75: //K
-			camPosZ--;
-			break;
-		case 74: //J
-			camPosX++;
-			break;
-		case 76: //L
-			camPosX--;
-			break;
-		case 79: //O
-			camPosY++;
-			break;
-		case 85: //U
-			camPosY--;
-			break;
-	}
-
-	teapot.position.set(camLAX, camLAY, camLAZ);
-	camera.position.set(camPosX, camPosY, camPosZ);
-	camera.lookAt(teapot.position);
-}
+let bombPlace = new Bomb(0.19,0,0,0);
+bombPlace.position.copy(cannon1.getBarrelOpening());
+//dsdwbombPlace.rotateX(-Math.PI/2);
+scene.add(bombPlace);
 
 // Rendering and Animation
 let t = 0;
@@ -137,9 +116,12 @@ function animate() {
 	
     renderer.render(scene, camera);
 
+	controls.update(clock.getDelta());
+
     roller_coaster.update(t);
 	island.update();
 	water.update();
+	// bombPlace.update(t);
 
     t += 0.002;
 

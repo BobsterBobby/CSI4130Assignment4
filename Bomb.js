@@ -48,7 +48,7 @@ export class Bomb extends THREE.Group {
 	}
 	
 	update(t){
-		t = t%200
+		t = t;
 		this.bomb.position.copy(this.path_curve.getPointAt(t));
 		this.bomb.lookAt(this.path_curve.getTangentAt(t).add(this.bomb.position).add(this.position));
 		

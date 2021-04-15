@@ -26,9 +26,9 @@ export class Island extends THREE.Group {
 		this.add(this.islandBase);
 		
 		//Rollercoaster Platform
-		let island_Base_Geo2 = new THREE.CylinderGeometry(this.radius/4, this.radius/4*3/2, this.islandHeight,1000, 1, false);
+		let island_Base_Geo2 = new THREE.CylinderGeometry(this.radius/1.5, this.radius/4*3/2, this.islandHeight,1000, 1, false);
 		this.islandBase2 = new THREE.Mesh(island_Base_Geo2, new THREE.MeshStandardMaterial({color: 0xee4444}));
-		this.islandBase2.position.set(this.islandPositionX,this.islandPositionY+this.islandHeight,this.islandPositionZ-this.radius/2);
+		this.islandBase2.position.set(this.islandPositionX,this.islandPositionY+this.islandHeight,this.islandPositionZ-this.radius/4);
 		this.islandBase2.receiveShadow = true;
 		this.add(this.islandBase2);
 		
